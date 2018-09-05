@@ -1,0 +1,29 @@
+.login-container{
+    margin:auto;
+    margin-top: 250px;
+    width: 50%;
+    border: solid green;
+    padding: 5px;
+}
+
+.login-container{
+    display:flex;
+    flex-direction: column;
+}
+
+form#signup-form{
+    display:flex;
+    flex-direction: column;
+}
+
+form#login-form{
+    display:flex;
+    flex-direction: column;
+
+}
+
+
+form#login-div{
+    
+
+}

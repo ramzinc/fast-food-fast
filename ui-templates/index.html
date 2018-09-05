@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+
+<html lang="en-US">
+  <head>
+    <title>FAST-FOOD-FAST</title>
+    <meta charset="UTF-8" />
+    <link href="stylesheets/main.css" rel="stylesheet" type="text/css" />
+    <script src="scripts/login.js"></script>
+  </head>
+
+  <body >
+      <div class="login-container">
+	  <div class="login-tab">
+	  <a href="#signup-id" class="tabcontent">SignUp</a>
+	  <a href="#login-id" class="tabcontent">Login</a>
+	  </div>
+      <div id ="signup-id" class="signup-div">
+	   <form id="signup-form">
+	      <label for="firstName">FirstName</label>
+	      <input type="text" id="firstName"/>
+	      <label for="lastName">LastName</label>
+	      <input type="text" id="lastName"/>
+	      <label for="emailId">Email:</label>
+	      <input id="emailId" type="email"/>
+	      <label for="passwordInp">Password</label>
+	      <input type="password" id="passwordInp"/>
+	   </form>
+      </div>
+      <div id ="login-id" class="login-div" hidden>
+	  <form id="login-form">
+	     <label for="emailId">Email:</label>
+	      <input id="emailId" type="email"/>
+	      <label for="passwordInp">Password</label>
+	      <input type="password" id="passwordInp"/>
+	  </form>
+      </div>
+     </div>
+      
+
+  </body>
+
+
+</html>
