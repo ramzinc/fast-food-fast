@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-
-<html lang="en-US">
+<html lang="en">
   <head>
     <title>FAST-FOOD-FAST</title>
     <meta charset="UTF-8" />
@@ -14,25 +13,34 @@
 	  <a href="#signup-id" class="tabcontent">SignUp</a>
 	  <a href="#login-id" class="tabcontent">Login</a>
 	  </div>
+<!--sign up div-->
       <div id ="signup-id" class="signup-div">
+	<!-- The Sign Up Form-->
 	   <form id="signup-form">
 	      <label for="firstName">FirstName</label>
-	      <input type="text" id="firstName"/>
+	      <input type="text" id="firstName" class="user-name"/>
 	      <label for="lastName">LastName</label>
-	      <input type="text" id="lastName"/>
-	      <label for="emailId">Email:</label>
-	      <input id="emailId" type="email"/>
+	      <input type="text" id="lastName" class="user-name"/>
+	      <label for="email-id">Email:</label>
+	      <input id="email-id" type="email" />
 	      <label for="passwordInp">Password</label>
-	      <input type="password" id="passwordInp"/>
+		  <input type="password" id="password-id"/>
+		  <p id="error-message"></p>
+		  <button onclick="validate()" id="button-sub" type="button">Submit</button>
+		  
 	   </form>
-      </div>
+	   <!--////-->
+	    
+	  </div>
+	  <!--sign-up div-->
+<!--login div-->
       <div id ="login-id" class="login-div" hidden>
-	  <form id="login-form">
-	     <label for="emailId">Email:</label>
-	      <input id="emailId" type="email"/>
-	      <label for="passwordInp">Password</label>
-	      <input type="password" id="passwordInp"/>
-	  </form>
+	  		<form id="login-form">
+	     		<label for="emailId">Email:</label>
+				<input id="emailId" type="email"/>
+				<label for="passwordInp">Password</label>
+				<input type="password" id="passwordInp"/>
+	  		</form>	
       </div>
      </div>
       
