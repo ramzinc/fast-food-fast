@@ -15,11 +15,11 @@ function validate(event){
     for(var[key,value] of validEmails){
         countOfMap +=1
         if(testInput(value,key)){
-            window.location.href="/home/zeus/experiments/andela/fast-food-fast/ui-templates/order.html";  
+            window.location.href="order.html";  
             break;
         }  else  
         if(ADMIN_NAME == email && ADMIN_PASS == password){
-            location.replace("/home/zeus/experiments/andela/fast-food-fast/ui-templates/admin.html");
+            location.replace("admin.html");
             break;
             //check wether the map still has elements before outputting error
         } if(countOfMap < validEmails.size){
