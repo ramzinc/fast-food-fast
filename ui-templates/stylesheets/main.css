@@ -22,4 +22,32 @@ form#login-form{
 
 }
 
+.nav-links{
+    display:flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+    
+}
+ul{
+    list-style: none;
+}
+li.nav-list-item{
+    border: solid chocolate;
+    border-width: thick;
+    z-index: 500;
+}
 
+.top-nav-container{
+    border:solid goldenrod;
+
+}
+#error-message{
+    color: #FF8388
+
+}
+.admin-welcome{
+    background: black;
+    color: white;
+
+}
