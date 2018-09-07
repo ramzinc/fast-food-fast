@@ -16,4 +16,4 @@ Project has embedded login details:
         Password:sevo4lyf
     ```
 
- ... Link to [Project Site]("ui-templates/index.html")
+ ... Link to [Project Site](ui-templates/index.html)
