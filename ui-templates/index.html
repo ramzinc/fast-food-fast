@@ -10,11 +10,11 @@
   <body>
       <div class="login-container">
 	  <div class="login-tab">
-	  <a href="#signup-id" class="tabcontent">SignUp</a>
-	  <a href="#login-id" class="tabcontent">Login</a>
+	  <a href="#signup-id" class="tabcontent" onclick="chooseSide()">SignUp</a>
+	  <a href="#login-id" class="tabcontent" onclick="chooseSide()">Login</a>
 	  </div>
 <!--sign up div-->
-      <div id ="signup-id" class="signup-div">
+      <div id ="signup-id" class="signup-div" hidden>
 	<!-- The Sign Up Form-->
 	   <form id="signup-form">
 	      <label for="firstName">FirstName</label>
@@ -36,10 +36,10 @@
 <!--login div-->
       <div id ="login-id" class="login-div" hidden>
 	  		<form id="login-form">
-	     		<label for="emailId">Email:</label>
-				<input id="emailId" type="email"/>
-				<label for="passwordInp">Password</label>
-				<input type="password" id="passwordInp"/>
+	     		<label for="email-id">Email:</label>
+				<input id="email-id" type="email"/>
+				<label for="password-id">Password</label>
+				<input type="password" id="password-id"/>
 	  		</form>	
       </div>
      </div>

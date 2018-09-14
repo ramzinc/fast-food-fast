@@ -30,12 +30,16 @@ function validate(event){
             var output_paragraph = document.getElementById("error-message");
             output_paragraph.innerText = output_text;
 
-        } 
+        }
     }
 
 }
 
+function chooseeSide(event){
+    document.getElementById("")
 
+
+}
 
 // tests the input nodes of the form
 function testInput(valuein,keyin){
