@@ -42,7 +42,7 @@ def get_specific_order(order_id):
     else:
         return '<p>The Order You Have entered Is InValid.</p>'
 
-@app.route('/orders/<int:order_id>',methods=['PATCH'])
+@app.route('/orders/<int:order_id>',methods=['PUT'])
 def update_status(order_id):
    if check_id_present(order_id):
       #request_order = request.get_json()
