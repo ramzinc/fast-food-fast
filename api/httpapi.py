@@ -10,7 +10,7 @@ orders = {'orders':[{'id': 1,'items': [{'rice':  10000,'matooke':4000,'chickenti
 @app.route('/',methods=['GET'])
 def get_index():
 
-    return '<p><h4>Please use The <a href=https://fast-food-fast-mpiima.herokuapp.com/orders/> /orders/ url string with the respective methods.<h4></p>'
+    return '<p><h4>Follow the <a href=https://fast-food-fast-mpiima.herokuapp.com/orders/> to the API </a><h4></p>'
 
 
 @app.route('/orders/',methods=['GET'])
