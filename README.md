@@ -1,3 +1,4 @@
+[![Coverage Status](https://coveralls.io/repos/github/ramzinc/fast-food-fast/badge.svg?branch=feature)](https://coveralls.io/github/ramzinc/fast-food-fast?branch=feature)
 # fast-food-fast
 Fast Food For Andelans
 ## Project Details
