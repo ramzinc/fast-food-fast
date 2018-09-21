@@ -5,3 +5,4 @@ api/__pycache__/
 .pytest_cache/
 api/httppapi/
 httpapi.egg-info
+tests/__pycache__/
