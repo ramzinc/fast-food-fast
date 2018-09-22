@@ -15,7 +15,7 @@ def request_client():
     
 def test_index_page(request_client):
     req_response = request_client.get('/')
-    assmsg = b'<p><h4>Follow the <a href=https://fast-food-fast-mpiima.herokuapp.com/orders/> to the API </a><h4></p>'
+    assmsg = b'<p><h4>Follow the <a href=https://fast-food-fast-mpiima.herokuapp.com/api/v1/orders/> to the API </a><h4></p>'
     assert assmsg == req_response.data
 
 
@@ -23,11 +23,11 @@ def test_get_orders(request_client):
     saved_data = {'orders':[{'id': 1,'items': [{'rice':  10000,'matooke':4000,'chickentika':6000}],'done':False},
                     {'id': 2,'items': [{'naan':6000,'beans':1000,'posho': 500}], 'done':False}
                 ]}
-    req_response = request_client.get('/orders/').get_json()
+    req_response = request_client.get('/api/v1/orders/').get_json()
     assert saved_data == req_response
 def test_get_specific_order(request_client):
     order = {'id': 1,'items': [{'rice':  10000,'matooke':4000,'chickentika':6000}],'done':False}
-    ret_order = request_client.get('/orders/1').get_json()
+    ret_order = request_client.get('/api/v1/orders/1').get_json()
     assert order == ret_order
 
 def test_update_order(request_client):
@@ -36,7 +36,7 @@ def test_update_order(request_client):
                     {'id': 2,'items': [{'naan':6000,'beans':1000,'posho': 500}], 'done':False}
                 ]}
     saved_data['orders'].append(data_post['orders'][0])
-    ret_order = request_client.post('/orders/',json=data_post)
+    ret_order = request_client.post('/api/v1/orders/',json=data_post)
     ret = ret_order.get_json()
     #saved_data = json.dumps(saved_data) No need to cast the saved_data into json
     #import pdb; pdb.set_trace()
@@ -45,7 +45,7 @@ def test_update_order(request_client):
 
 def test_update_status(request_client):
     test_data = {'id': 1,'items': [{'rice':  10000,'matooke':4000,'chickentika':6000}],'done':True}
-    response_status = request_client.put('/orders/1')
+    response_status = request_client.put('/api/v1/orders/1')
     out = response_status.get_json()
     assert out == test_data
 

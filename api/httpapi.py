@@ -10,14 +10,14 @@ orders = {'orders':[{'id': 1,'items': [{'rice':  10000,'matooke':4000,'chickenti
 @app.route('/',methods=['GET'])
 def get_index():
 
-    return '<p><h4>Follow the <a href=https://fast-food-fast-mpiima.herokuapp.com/orders/> to the API </a><h4></p>'
+    return '<p><h4>Follow the <a href=https://fast-food-fast-mpiima.herokuapp.com/api/v1/orders/> to the API </a><h4></p>'
 
 
-@app.route('/orders/',methods=['GET'])
+@app.route('/api/v1/orders/',methods=['GET'])
 def get_orders():
     return jsonify(orders)
 
-@app.route('/orders/',methods=['POST']) 
+@app.route('/api/v1/orders/',methods=['POST']) 
 def update_order():
     order = request.get_json()
     if validate(order):
@@ -33,7 +33,7 @@ def update_order():
         return response
 
 
-@app.route('/orders/<int:order_id>',methods=['GET'])
+@app.route('/api/v1/orders/<int:order_id>',methods=['GET'])
 def get_specific_order(order_id):
     if check_id_present(order_id):
         content_type = [('Content-Type','application/json')]
@@ -42,7 +42,7 @@ def get_specific_order(order_id):
     else:
         return '<p>The Order You Have entered Is InValid.</p>'
 
-@app.route('/orders/<int:order_id>',methods=['PUT'])
+@app.route('/api/v1/orders/<int:order_id>',methods=['PUT'])
 def update_status(order_id):
    if check_id_present(order_id):
       #request_order = request.get_json()
