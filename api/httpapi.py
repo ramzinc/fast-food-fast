@@ -18,7 +18,7 @@ def get_orders():
     return jsonify(orders)
 
 @app.route('/api/v1/orders/',methods=['POST']) 
-def update_order():
+def add_order():
     order = request.get_json()
     if validate(order):
         #append the list of orders
