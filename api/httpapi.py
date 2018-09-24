@@ -1,12 +1,8 @@
 from flask import Flask,jsonify,request,make_response
+from http_helper_scripts import orders
 import json
 app = Flask(__name__)
 #ORDER_ID_PRESENT_FLAG = False
-orders = {'orders':[{'id': 1,'items': [{'rice':  10000,'matooke':4000,'chickentika':6000}],'done':False},
-                    {'id': 2,'items': [{'naan':6000,'beans':1000,'posho': 500}], 'done':False}
-    
-]}
-
 @app.route('/',methods=['GET'])
 def get_index():
 

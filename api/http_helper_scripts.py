@@ -1,0 +1,2 @@
+orders = {'orders':[{'id': 1,'items': [{'rice':  10000,'matooke':4000,'chickentika':6000}],'done':False},
+                    {'id': 2,'items': [{'naan':6000,'beans':1000,'posho': 500}], 'done':False}]}
