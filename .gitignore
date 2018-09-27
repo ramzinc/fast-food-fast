@@ -6,3 +6,7 @@ api/__pycache__/
 api/httppapi/
 httpapi.egg-info
 tests/__pycache__/
+*.pyc
+dist/
+build/
+*.egg-info/
