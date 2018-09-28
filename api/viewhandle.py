@@ -1,40 +1,42 @@
 from flask import Flask,request,make_response,jsonify,g
 from flask_restful import Resource, Api
 from api.model import Orders
-from api.http_helper_scripts import validate ,insert_data,check_if_list,get_order,check_id_present
+from api.http_helper_scripts import validate ,insert_data,check_if_list,get_order,check_id_present,change_status
 import json
-
+id = 1
 app = Flask(__name__)
 api = Api(app)
-ret_order = dict()
+#ret_order = dict()
+ret_order =  [{'id':1,'meal_name':"mawolu","price":4000,"status":False}]
 class Requests_Handler(Resource):
     app = Flask(__name__)
     api = Api(app)
-    id = 0
+   
     order =  list()
     
     def post(self):
         req_data = request.get_json()
-        if check_if_list(req_data):
-            posted_order = req_data
-        else:
-            posted_order = list()
-            posted_order.append(req_data)
+       # if check_if_list(req_data):
+       #     posted_order = req_data
+       # else:
+       #     posted_order = list()
+       #     posted_order.append(req_data)
         #import pdb;pdb.set_trace()
-        if validate(posted_order):
+        if validate(req_data):
             
-            #posted_order[1]['id'] = id + 1
-            # Orders(posted_order['id'],posted_order['meal_name'],posted_order['price'],False)
             #import pdb;pdb.set_trace()
-            # The id will be incremented by the insert_data function that will loop through the list 
-            self.order = insert_data(posted_order,self.id) 
+            # The id will be incremented by the insert_data function 
+            # 
+            global id     
+            global ret_order
+            ret_order,id = insert_data(req_data,id,ret_order) 
             #import pdb;pdb.set_trace()
-            global ret_order 
-            ret_order= self.order
-            ret_order_local = ret_order
+             
+            #ret_order.append(self.order)
+            ret_order_local = ret_order[id-1]
             #resp = make_response(json.dumps(self.order),200,[('Content-Type','application/json')])
-            msg_resp = make_response('Message:Order Created {0}'.format(ret_order_local),201)
-            return msg_resp
+            #msg_resp = make_response(ret_order_local,201)
+            return make_response(jsonify({"items":ret_order_local}),201)
         else:
             return make_response('Message: The Structure Is Malformed',400)
 
@@ -54,14 +56,17 @@ class Requests_Handler(Resource):
 
 class Get_Requests(Resource):
     def get(self):
-        #ret_o = dict()
+        
+        #list_data = insert_data("meal_name",4)
         global ret_order
         ret_o = ret_order
-
-       
+        #if list_data:
+        #    return (jsonify({'message': list_data}),200)
+    #
         #resp = make_response(ret,200)
        # import pdb;pdb.set_trace()
-        return ('These are the orders{0}'.format(ret_o),200)
+        mime_type =("Content-Type","application/json")
+        return make_response(jsonify({"items":ret_o}), 200)
 
 class Get_Request(Resource):
     
@@ -75,14 +80,24 @@ class Get_Request(Resource):
 class Get_Index(Resource):
 
     def get(self):
-        msg = '<p><h4>Follow the <a href=https://fast-food-fast-mpiima.herokuapp.com/api/v1/orders/> to the API </a><h4></p>'
-        return msg
+        #msg = '<p><h4>Follow the <a href=https://fast-food-fast-mpiima.herokuapp.com/api/v1/orders/> to the API </a><h4></p>'
+        msg = 'Follow Me'
+        return (msg,200)
 
-
+class Put_Status(Resource):
+    
+    def put(self,id):
+        if check_id_present(id,ret_order):
+            order = get_order(id,ret_order)
+            order['status']=change_status(order['status'])
+            return (order,200)
+        else:
+            return make_response("Order Does not exist",200)
 
 api.add_resource(Requests_Handler,"/api/v1/orders/")
 api.add_resource(Get_Requests,"/api/v1/orders/")
 api.add_resource(Get_Request,"/api/v1/orders/<int:id>")
-api.add_resource(Get_Index,"/api/v1")
+api.add_resource(Get_Index,"/api/v1/")
+api.add_resource(Put_Status,"/api/v1/orders/<int:id>")
 if __name__ == '__main__':
         app.run()

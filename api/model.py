@@ -1,7 +1,8 @@
 import json
 
 class Orders(object):
-
+    
+    ord = {}
     def  __init__ (self,id,meal_name,price,status):
         self.id = id
         self.meal_name = meal_name
