@@ -83,6 +83,6 @@ class Get_Index(Resource):
 api.add_resource(Requests_Handler,"/api/v1/orders/")
 api.add_resource(Get_Requests,"/api/v1/orders/")
 api.add_resource(Get_Request,"/api/v1/orders/<int:id>")
-api.add_resource(Get_Index,"/")
+api.add_resource(Get_Index,"/api/v1")
 if __name__ == '__main__':
         app.run()
