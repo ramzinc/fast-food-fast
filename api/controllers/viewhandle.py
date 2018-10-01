@@ -1,6 +1,6 @@
 from flask import Flask,request,make_response,jsonify,g
 from flask_restful import Resource, Api
-from api.model import Orders
+from api.models.model import Orders
 from api.http_helper_scripts import validate ,insert_data,check_if_list,get_order,check_id_present,change_status
 import json
 id = 1

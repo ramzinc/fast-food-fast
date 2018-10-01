@@ -1,1 +1,1 @@
-web: gunicorn api.viewhandle:app
+web: gunicorn api.controllers.viewhandle:app

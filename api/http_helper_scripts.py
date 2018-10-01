@@ -1,5 +1,5 @@
 #rom api.models.model import Orders
-from api.model import Orders
+from api.models.model import Orders
 #orders = [{'id': 1,'meal_name':'matooke' ,'price':4000},{'id':2,'meal_name':'chickentika','price':6000,'status': False},
 #                   {'id': 3,'meal_name': 'beans' ,'price':1000, 'status': False}]
 
