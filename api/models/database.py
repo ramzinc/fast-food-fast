@@ -21,7 +21,7 @@ class Database(object):
         #with viewhandle.app.open_resource('schema.sql') as schema:
             #cursor.execute(schema.read())
         cursor.execute("CREATE TABLE IF NOT EXISTS Users(user_id SERIAL primary key ,full_name text ,admin boolean,email text,password text);")
-        cursor.execute("CREATE TABLE IF NOT EXISTS Fast_Meals(meal_id SERIAL PRIMARY KEY , meal_name text,price numeric);")
+        cursor.execute("CREATE TABLE IF NOT EXISTS Fast_Meals(meal_id SERIAL PRIMARY KEY , meal_name text UNIQUE,price numeric);")
         cursor.execute("CREATE TABLE IF NOT EXISTS Fast_Order(order_id  SERIAL PRIMARY KEY ,user_id int  REFERENCES Users (user_id) ON UPDATE CASCADE ON DELETE RESTRICT,meal_id int  REFERENCES Fast_Meals (meal_id));")
         connect.commit()
         connect.close

@@ -31,3 +31,13 @@ def insert_user_data_into_userdb(user_data):
     cur.execute("INSERT INTO Users (full_name,admin,email,password) VALUES (%s,%s,%s,%s)",(full_name,admin,user_data['email'],user_data['password']))
     conn.commit()
     conn.close()
+
+def get_menu_items():
+    db = Database(db_name)
+    conn = db.connect_datab()
+    cur = conn.cursor()
+    
+    cur.execute("SELECT * from fast_meals;")
+    lis = cur.fetchall()
+    return lis
+        

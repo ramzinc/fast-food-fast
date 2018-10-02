@@ -2,7 +2,7 @@ from flask import Flask,request,make_response,jsonify,g
 from flask_restful import Resource, Api
 from api.models.model import Orders
 from api.http_helper_scripts import validate_order ,insert_data,check_if_list,get_order,check_id_present,change_status
-from api.user_helper_scripts import validate_user, insert_user_data_into_userdb
+from api.user_helper_scripts import validate_user, insert_user_data_into_userdb,get_menu_items
 import json
 id = 0
 app = Flask(__name__)
@@ -11,14 +11,14 @@ app.config.from_object('configapp.Config')
 api = Api(app)
 ret_order = list()
 #ret_order =  [{'id':1,'meal_name':"mawolu","price":4000,"status":False}]
-class Requests_Handler(Resource):
+class Post_Food_Item(Resource):
     '''
     This class handles the post method requests
     '''
     app = Flask(__name__)
     api = Api(app)
    
-    order =  list()
+    
     
     def post(self):
         req_data = request.get_json()
@@ -34,14 +34,15 @@ class Requests_Handler(Resource):
             # The id will be incremented by the insert_data function 
             # 
             #global id     
-            global ret_order
-            ret_order = insert_data(req_data,ret_order) 
+            #global ret_order
+            order =  list()
+            insert_data(req_data,order) 
             #import pdb;pdb.set_trace()
             #ret_order.append(self.order)
-            ret_order_local = ret_order[id-1]
+            ret_order_local = req_data
             #resp = make_response(json.dumps(self.order),200,[('Content-Type','application/json')])
             #msg_resp = make_response(ret_order_local,201)
-            return make_response(jsonify({"items":ret_order_local}),201)
+            return make_response(jsonify({"Menu Item Added":ret_order_local}),201)
         else:
             return make_response('Message: The Structure Is Malformed',400)
 
@@ -59,19 +60,17 @@ class Requests_Handler(Resource):
          return make_response(jsonify({'message':"500 error"}),500)
 
 
-class Get_Requests(Resource):
+class Get_Menu(Resource):
     def get(self):
         
         #list_data = insert_data("meal_name",4)
-        global ret_order
-        ret_o = ret_order
-        #if list_data:
-        #    return (jsonify({'message': list_data}),200)
-    #
+        #global ret_order
+        #ret_o = ret_order
+        menu_list = get_menu_items()
         #resp = make_response(ret,200)
        # import pdb;pdb.set_trace()
-        mime_type =("Content-Type","application/json")
-        return make_response(jsonify({"items":ret_o}), 200)
+        #mime_type =("Content-Type","application/json")
+        return make_response(jsonify({"items":menu_list}), 200)
 
 class Get_Request(Resource):
     
@@ -109,8 +108,8 @@ class Post_Signup(Resource):
             return make_response("One Of your values is wrong",400)        
 
 api.add_resource(Post_Signup,"/auth/signup")
-api.add_resource(Requests_Handler,"/api/v1/orders/")
-api.add_resource(Get_Requests,"/api/v1/orders/")
+api.add_resource(Post_Food_Item,"/menu/")
+api.add_resource(Get_Menu,"/menu/")
 api.add_resource(Get_Request,"/api/v1/orders/<int:id>")
 api.add_resource(Get_Index,"/api/v1/")
 api.add_resource(Put_Status,"/api/v1/orders/<int:id>")
