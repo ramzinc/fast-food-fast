@@ -3,7 +3,7 @@ import json
 from api.controllers.viewhandle import app,ret_order
 import unittest
 from flask import jsonify
-
+from api.models.database import Database
 #class testCases(unittest.TestCase):
 #        def setUp(self):
 #            self.test_client = app.test_client()
@@ -13,13 +13,23 @@ from flask import jsonify
 #            self.test_client.post(':5000/api/v1/orders',data=json.dumps(post_data))
 
 
-save_data = {'items':[{'id':1,'meal_name':"mawolu","price":4000,"status":False}]}
+#save_data = {'items':[{'id':1,'meal_name':"mawolu","price":4000,"status":False}]}
 
 @pytest.fixture
 def test_client():
-   post_data = {"meal_name": "kawunga","price":1000}
+   db_name="fast_food_fast_testing"
+   db = Database(db_name)
+   with db.connect_datab() as db_conn:
+        cur = db_conn.cursor()
+        cur.execute_query()
+          
+    
+        
+
+   #post_data = {"meal_name": "kawunga","price":1000}
    test_client = app.test_client()
    app.config['TESTING'] = True
+    
    #saved_data = test_client.post('/api/v1/orders',dat)
    #saved_data = test_client.post('/api/v1/orders',data=post_data, follow_redirects=True)         
    return test_client

@@ -3,12 +3,17 @@ from flask_restful import Resource, Api
 from api.models.model import Orders
 from api.http_helper_scripts import validate ,insert_data,check_if_list,get_order,check_id_present,change_status
 import json
-id = 1
+id = 0
 app = Flask(__name__)
+app.config.from_object('configapp.Config')
+#DATABASE_URI = app.config['DATABASE_URI']
 api = Api(app)
-#ret_order = dict()
-ret_order =  [{'id':1,'meal_name':"mawolu","price":4000,"status":False}]
+ret_order = list()
+#ret_order =  [{'id':1,'meal_name':"mawolu","price":4000,"status":False}]
 class Requests_Handler(Resource):
+    '''
+    This class handles the post method requests
+    '''
     app = Flask(__name__)
     api = Api(app)
    
@@ -27,11 +32,10 @@ class Requests_Handler(Resource):
             #import pdb;pdb.set_trace()
             # The id will be incremented by the insert_data function 
             # 
-            global id     
+            #global id     
             global ret_order
-            ret_order,id = insert_data(req_data,id,ret_order) 
+            ret_order = insert_data(req_data,ret_order) 
             #import pdb;pdb.set_trace()
-             
             #ret_order.append(self.order)
             ret_order_local = ret_order[id-1]
             #resp = make_response(json.dumps(self.order),200,[('Content-Type','application/json')])
