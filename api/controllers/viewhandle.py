@@ -1,7 +1,8 @@
 from flask import Flask,request,make_response,jsonify,g
 from flask_restful import Resource, Api
 from api.models.model import Orders
-from api.http_helper_scripts import validate ,insert_data,check_if_list,get_order,check_id_present,change_status
+from api.http_helper_scripts import validate_order ,insert_data,check_if_list,get_order,check_id_present,change_status
+from api.user_helper_scripts import validate_user, insert_user_data_into_userdb
 import json
 id = 0
 app = Flask(__name__)
@@ -27,7 +28,7 @@ class Requests_Handler(Resource):
        #     posted_order = list()
        #     posted_order.append(req_data)
         #import pdb;pdb.set_trace()
-        if validate(req_data):
+        if validate_order(req_data):
             
             #import pdb;pdb.set_trace()
             # The id will be incremented by the insert_data function 
@@ -44,7 +45,7 @@ class Requests_Handler(Resource):
         else:
             return make_response('Message: The Structure Is Malformed',400)
 
-    
+ 
     @app.errorhandler(405)
     def url_not_found(self, error):
         return make_response(jsonify({'message':'Requested method not allowed'}), 405)
@@ -98,6 +99,16 @@ class Put_Status(Resource):
         else:
             return make_response("Order Does not exist",200)
 
+class Post_Signup(Resource):
+    def post(self):
+        req_data = request.get_json()
+        if validate_user(req_data):
+            insert_user_data_into_userdb(req_data)
+            return make_response(jsonify({"user_entered":req_data}))
+        else:
+            return make_response("One Of your values is wrong",400)        
+
+api.add_resource(Post_Signup,"/auth/signup")
 api.add_resource(Requests_Handler,"/api/v1/orders/")
 api.add_resource(Get_Requests,"/api/v1/orders/")
 api.add_resource(Get_Request,"/api/v1/orders/<int:id>")
