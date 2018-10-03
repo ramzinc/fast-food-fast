@@ -1,23 +1,27 @@
 from flask import Flask,request,make_response,jsonify,g
 from flask_restful import Resource, Api
-from api.models.model import Orders
-from api.http_helper_scripts import validate_order ,insert_data,check_if_list,get_order,check_id_present,change_status
-from api.user_helper_scripts import validate_user, insert_user_data_into_userdb,get_menu_items
+from flask_jwt_extended import (JWTManager,jwt_required,create_access_token,get_jwt_identity)
+from api.models.orders import Orders
+from api.http_helper_scripts import validate_food ,insert_data,check_if_list,get_order,check_id_present,change_status
+from api.user_helper_scripts import (validate_user, insert_user_data_into_userdb,get_menu_items,validate_signin_data,get_user_data)
 import json
+
 id = 0
 app = Flask(__name__)
 app.config.from_object('configapp.Config')
+app.config['JWT_SECRET_KEY']= 'ZMv_k_%;8-7-6ZHnCub'
 #DATABASE_URI = app.config['DATABASE_URI']
 api = Api(app)
+jwt = JWTManager(app)
 ret_order = list()
 #ret_order =  [{'id':1,'meal_name':"mawolu","price":4000,"status":False}]
 class Post_Food_Item(Resource):
     '''
     This class handles the post method requests
     '''
-    app = Flask(__name__)
-    api = Api(app)
-   
+   # app = Flask(__name__)
+    #api = Api(app)
+    
     
     
     def post(self):
@@ -28,15 +32,10 @@ class Post_Food_Item(Resource):
        #     posted_order = list()
        #     posted_order.append(req_data)
         #import pdb;pdb.set_trace()
-        if validate_order(req_data):
-            
-            #import pdb;pdb.set_trace()
-            # The id will be incremented by the insert_data function 
-            # 
-            #global id     
+        if validate_food(req_data):
             #global ret_order
-            order =  list()
-            insert_data(req_data,order) 
+            food_item =  list()
+            insert_data(req_data,food_item) 
             #import pdb;pdb.set_trace()
             #ret_order.append(self.order)
             ret_order_local = req_data
@@ -68,12 +67,12 @@ class Get_Menu(Resource):
         #ret_o = ret_order
         menu_list = get_menu_items()
         #resp = make_response(ret,200)
-       # import pdb;pdb.set_trace()
+        #import pdb;pdb.set_trace()
         #mime_type =("Content-Type","application/json")
-        return make_response(jsonify({"items":menu_list}), 200)
+        return make_response(jsonify({"items":menu_list}),200)
 
 class Get_Request(Resource):
-    
+    @jwt_required    
     def get(self,id):
         global ret_order
         if check_id_present(id,ret_order):
@@ -107,9 +106,43 @@ class Post_Signup(Resource):
         else:
             return make_response("One Of your values is wrong",400)        
 
+class Post_SignIn(Resource):
+    '''
+    Sign in into the app  
+    '''
+    def post(self):
+        req_data = request.get_json()
+        if validate_signin_data(req_data):
+            db_data = get_user_data(req_data)
+            access_token = create_access_token(identity=db_data['id'],expires_delta=False)
+            #import pdb;pdb.set_trace()
+            #return make_response(jsonify({'Logged In As':db_data}),200)
+            return jsonify(access_token=access_token)
+        else:
+            return make_response(jsonify({'One of your inputs are invalid'}))
+
+class Post_Order(Resource):
+    '''
+    Method to post order
+    '''
+    @jwt_required
+    def post(self):
+        current_user = get_jwt_identity()
+        req_data = request.get_json()
+        meal_name = req_data['meal_name']
+        ord = Orders(meal_name,current_user)
+        ord.set_meal_id()
+        ord.set_status('New')
+        ord.save_into_db()
+        order = ord.get_order_dic()
+        return make_response(jsonify({'order_place':order}))
+        
+
 api.add_resource(Post_Signup,"/auth/signup")
-api.add_resource(Post_Food_Item,"/menu/")
-api.add_resource(Get_Menu,"/menu/")
+api.add_resource(Post_SignIn,"/auth/login")
+api.add_resource(Post_Food_Item,"/menu")
+api.add_resource(Get_Menu,"/menu")
+api.add_resource(Post_Order,"/users/orders")
 api.add_resource(Get_Request,"/api/v1/orders/<int:id>")
 api.add_resource(Get_Index,"/api/v1/")
 api.add_resource(Put_Status,"/api/v1/orders/<int:id>")

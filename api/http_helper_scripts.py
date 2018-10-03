@@ -7,7 +7,7 @@ from flask import g
 
 #validate if there no id , and a string of meal_name and price is an int
 db_name ="fast_food_fast_testing"
-def validate_order(order):
+def validate_food(order):
     #for i in order:
     if 'id' not in order and 'meal_name' in order and 'price' in order and isinstance(order['price'],int):
         #import pdb;pdb.set_trace()
@@ -40,11 +40,11 @@ def insert_data(ps_order,current_list):
     #id = id + 1
     current_list.append(Orders(ps_order['meal_name'],ps_order['price'],False).get_order_json())
     #import pdb; pdb.set_trace()
-    insert_order_data_into_orderdb(current_list)
+    insert_meal_data_into_mealtb(current_list)
     #import pdb; pdb.set_trace()
     #return current_list      
 
-def insert_order_data_into_orderdb(current_list):
+def insert_meal_data_into_mealtb(current_list):
 
     
     db = Database(db_name)
