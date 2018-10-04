@@ -3,7 +3,7 @@ from flask_restful import Resource, Api
 from flask_jwt_extended import (JWTManager,jwt_required,create_access_token,get_jwt_identity)
 from api.models.orders import Orders
 from api.models.users import User
-from api.http_helper_scripts import validate_food ,insert_data,check_if_list,get_order,check_id_present,change_status
+from api.http_helper_scripts import validate_status,validate_food ,insert_data,check_if_list,get_order,check_id_present,change_status
 from api.user_helper_scripts import (is_admin,validate_user, insert_user_data_into_userdb,get_menu_items,validate_signin_data,get_user_data,get_orders,get_specific_order)
 import json
 
@@ -72,14 +72,14 @@ class Get_Menu(Resource):
         #mime_type =("Content-Type","application/json")
         return make_response(jsonify({"items":menu_list}),200)
 
-class Get_Request(Resource):
-    @jwt_required    
-    def get(self,id):
-        global ret_order
-        if check_id_present(id,ret_order):
-            return (get_order(id,ret_order),200)
-        else:
-            return ("{'Message': 'ID Not Found'}",404)
+#class Get_Request(Resource):
+#    @jwt_required    
+#    def get(self,id):
+#        global ret_order
+#        if check_id_present(id,ret_order):
+#            return (get_order(id,ret_order),200)
+#        else:
+#            return ("{'Message': 'ID Not Found'}",404)
 
 class Get_Index(Resource):
 
@@ -89,14 +89,17 @@ class Get_Index(Resource):
         return (msg,200)
 
 class Put_Status(Resource):
-    
-    def put(self,id):
-        if check_id_present(id,ret_order):
-            order = get_order(id,ret_order)
-            order['status']=change_status(order['status'])
-            return (order,200)
+    @jwt_required
+    def put(self,order_id):
+        req_status  = request.get_json()
+        current_user_id = get_jwt_identity()
+        user =User()
+        user_info = user.get_user_data_using_id(current_user_id)
+        if user.validate_admin(user_info) and validate_status(req_status)and check_id_present(order_id):
+            response_text = change_status(req_status['status'],order_id)
+            return response_text
         else:
-            return make_response("Order Does not exist",200)
+            return make_response(jsonify({"Error_msg":"Your request contains errors probably not an Admin or Id doesnot exis or status is illegal"}),400)
 
 class Post_Signup(Resource):
     def post(self):
@@ -196,8 +199,6 @@ class Get_Specific_Order(Resource):
             return make_response(jsonify({"Error_Msg":"You are not athorized"}))
 
 
-            
-
 
 
 api.add_resource(Post_Signup,"/auth/signup")
@@ -209,6 +210,6 @@ api.add_resource(Get_User_Order,"/users/orders")
 api.add_resource(Get_List_Orders,"/orders")
 api.add_resource(Get_Specific_Order,"/orders/<int:order_id>")
 api.add_resource(Get_Index,"/api/v1/")
-api.add_resource(Put_Status,"/api/v1/orders/<int:id>")
+api.add_resource(Put_Status,"/orders/<int:order_id>")
 if __name__ == '__main__':
         app.run()
