@@ -1,7 +1,8 @@
 import json
+from api.models.database import Database
 
 class Meals(object):
-    
+    db_name = 'fast_food_fast_testing'    
     ord = {}
     def  __init__ (self,meal_name,price):
         #self.id = id
@@ -15,3 +16,11 @@ class Meals(object):
         #return json.dumps(ord)
         return ord
     
+    def get_meal_from_id(self,meal_id):
+        db = Database(self.db_name)
+        conn = db.connect_datab()
+        cur = conn.cursor()
+        cur.execute("SELECT * from fast_meals where meal_id = %s;" % (meal_id))
+        meal_name_tup = cur.fetchone()
+        meal_name = meal_name_tup[0]
+        return meal_name

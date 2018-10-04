@@ -84,14 +84,14 @@ def validate_signin_data(req_data):
         return False
 
 def get_meal_id(db_in,meal_name):
-        #query = 'SELECT id From fast_meals WHERE fastmeals.meal_name = %s;',(meal_name)
-        db = Database(db_in)
-        db.execute_query()   #incase post order is None
-        conn = db.connect_datab()
-        cur = conn.cursor()
-        cur.execute("SELECT meal_id from fast_meals WHERE meal_name = '%s';" % (meal_name))
-        meal_id = cur.fetchone()
-        return meal_id[0]
+    #query = 'SELECT id From fast_meals WHERE fastmeals.meal_name = %s;',(meal_name)
+    db = Database(db_in)
+    db.execute_query()   #incase post order is None
+    conn = db.connect_datab()
+    cur = conn.cursor()
+    cur.execute("SELECT meal_id from fast_meals WHERE meal_name = '%s';" % (meal_name))
+    meal_id = cur.fetchone()
+    return meal_id[0]
     
 def get_orders():
     

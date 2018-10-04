@@ -4,7 +4,7 @@ from flask_jwt_extended import (JWTManager,jwt_required,create_access_token,get_
 from api.models.orders import Orders
 from api.models.users import User
 from api.http_helper_scripts import validate_food ,insert_data,check_if_list,get_order,check_id_present,change_status
-from api.user_helper_scripts import (validate_user, insert_user_data_into_userdb,get_menu_items,validate_signin_data,get_user_data,get_orders)
+from api.user_helper_scripts import (is_admin,validate_user, insert_user_data_into_userdb,get_menu_items,validate_signin_data,get_user_data,get_orders)
 import json
 
 id = 0
@@ -155,10 +155,27 @@ class Get_List_Orders(Resource):
         else:
             return make_response(jsonify({"Msg":"Your Not Authorised to get dat list"}))
         
-#class Get_User_Order(Resource):
-#    @jwt_required
-#    def get(self):
-#        customer_id = get_jwt_identity()
+class Get_User_Order(Resource):
+    '''
+    Get A Specific Users id Only Accessible by Admin
+    '''
+    @jwt_required
+    def get(self):
+        login_id = get_jwt_identity()
+        usr = User()
+        #import pdb;pdb.set_trace()
+        #usr_info = 
+        if usr.check_if_user_id_indb(login_id):
+            meal_names = usr.check_for_specific_usr_ord(login_id)
+            if meal_names == []:
+                return make_response(jsonify({"Msg":"Your User Has No Orders"}))
+            else:
+            #import pdb; pdb.set_trace()
+                return make_response(jsonify({"ordered_meals": meal_names}))
+        else:
+            return make_response(jsonify({"Error_Msg":"You are not Authorized to access this p"}))
+            
+
 
 
 api.add_resource(Post_Signup,"/auth/signup")
@@ -166,7 +183,7 @@ api.add_resource(Post_SignIn,"/auth/login")
 api.add_resource(Post_Food_Item,"/menu")
 api.add_resource(Get_Menu,"/menu")
 api.add_resource(Post_Order,"/users/orders")
-#api.add_resource(Get_User_Order,"/users/orders")
+api.add_resource(Get_User_Order,"/users/orders")
 api.add_resource(Get_List_Orders,"/orders")
 api.add_resource(Get_Request,"/orders/<int:id>")
 api.add_resource(Get_Index,"/api/v1/")

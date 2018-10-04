@@ -18,7 +18,7 @@ class Orders(object):
         cur = conn.cursor()
         cur.execute("SELECT quantity from fast_order where user_id = %s and meal_id = %s;" % (self.order['user_id'],self.order['meal_id']))
         tup_returned  = cur.fetchone()
-        import pdb;pdb.set_trace()
+        #import pdb;pdb.set_trace()
         #return tup_returned
         if not tup_returned == None:
                 self.order['quantity'] = tup_returned[0]+1
@@ -71,6 +71,13 @@ class Orders(object):
         conn.commit()
         conn.close()
 
+   # def get_meal_id_from_user_id(self,id):
+   #     db = Database(self.db_name)
+   #     conn = db.connect_datab()
+   #     cur = conn.cursor()
+   #     cur.execute("SELECT meal  ")
+   #     conn.close()
+
    #
    #   
    # 
@@ -85,17 +92,24 @@ class Orders(object):
             else:
                 return False
 
-    #This gets the id from the orders table 
+    #This gets the meal_id from the orders table using The user_id 
     def get_meal_id_from_user_id(self,user_id):
+        '''
+        This gets the meal_id from the orders table using The user_id
+        '''
         db = Database(self.db_name)
         conn = db.connect_datab()
         cur = conn.cursor()
+
         cur.execute("SELECT meal_id,quantity from fast_order where user_id= '%s';" % (user_id))
         meal_id_tup = cur.fetchall()
-        
+        return meal_id_tup
                 
 
     def get_meal_name_from_id(self,meal_id):
+        '''
+        Gets meal_name From meal_id 
+        '''
         meal_name_dict = dict()
         db = Database(self.db_name)
         conn = db.connect_datab()
