@@ -24,7 +24,7 @@ class Database(object):
         cursor.execute("CREATE TABLE IF NOT EXISTS Users(user_id SERIAL primary key ,full_name text ,admin boolean,email text UNIQUE,password text);")
         cursor.execute("CREATE TABLE IF NOT EXISTS Fast_Meals(meal_id SERIAL PRIMARY KEY , meal_name text UNIQUE,price integer);")
         #cursor.execute("CREATE TYPE ord_status AS ENUM ('New','Processing','Cancelled','Complete');")
-        cursor.execute("CREATE TABLE IF NOT EXISTS Fast_Order(order_id  SERIAL PRIMARY KEY ,user_id int  REFERENCES Users (user_id) ON UPDATE CASCADE ON DELETE RESTRICT,meal_id int  REFERENCES Fast_Meals (meal_id),order_status text);")
+        cursor.execute("CREATE TABLE IF NOT EXISTS Fast_Order(order_id  SERIAL PRIMARY KEY ,user_id int  REFERENCES Users (user_id) ON UPDATE CASCADE ON DELETE RESTRICT,meal_id int  REFERENCES Fast_Meals (meal_id),order_status text,quantity int);")
         connect.commit()
         connect.close()
         

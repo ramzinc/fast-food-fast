@@ -2,8 +2,9 @@ from flask import Flask,request,make_response,jsonify,g
 from flask_restful import Resource, Api
 from flask_jwt_extended import (JWTManager,jwt_required,create_access_token,get_jwt_identity)
 from api.models.orders import Orders
+from api.models.users import User
 from api.http_helper_scripts import validate_food ,insert_data,check_if_list,get_order,check_id_present,change_status
-from api.user_helper_scripts import (validate_user, insert_user_data_into_userdb,get_menu_items,validate_signin_data,get_user_data)
+from api.user_helper_scripts import (validate_user, insert_user_data_into_userdb,get_menu_items,validate_signin_data,get_user_data,get_orders)
 import json
 
 id = 0
@@ -133,17 +134,41 @@ class Post_Order(Resource):
         ord = Orders(meal_name,current_user)
         ord.set_meal_id()
         ord.set_status('New')
-        ord.save_into_db()
+        #import pdb;pdb.set_trace() # Not running
+        quantity = ord.get_quantity()
+        if quantity > 1:
+             ord.save_quantity_alone()        
+        else:
+             ord.save_into_db()
         order = ord.get_order_dic()
         return make_response(jsonify({'order_place':order}))
+
+class Get_List_Orders(Resource):
+    @jwt_required
+    def get(self):
+        current_user_id = get_jwt_identity()
+        user =User()
+        user_info = user.get_user_data_using_id(current_user_id)
+        if user.validate_admin(user_info):
+            order = get_orders()
+            return make_response(jsonify({"order":order}))
+        else:
+            return make_response(jsonify({"Msg":"Your Not Authorised to get dat list"}))
         
+#class Get_User_Order(Resource):
+#    @jwt_required
+#    def get(self):
+#        customer_id = get_jwt_identity()
+
 
 api.add_resource(Post_Signup,"/auth/signup")
 api.add_resource(Post_SignIn,"/auth/login")
 api.add_resource(Post_Food_Item,"/menu")
 api.add_resource(Get_Menu,"/menu")
 api.add_resource(Post_Order,"/users/orders")
-api.add_resource(Get_Request,"/api/v1/orders/<int:id>")
+#api.add_resource(Get_User_Order,"/users/orders")
+api.add_resource(Get_List_Orders,"/orders")
+api.add_resource(Get_Request,"/orders/<int:id>")
 api.add_resource(Get_Index,"/api/v1/")
 api.add_resource(Put_Status,"/api/v1/orders/<int:id>")
 if __name__ == '__main__':

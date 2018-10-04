@@ -1,5 +1,5 @@
-#rom api.models.model import Orders
-from api.models.model import Orders
+
+from api.models.model import Meals
 from api.models.database import Database
 from flask import g
 #orders = [{'id': 1,'meal_name':'matooke' ,'price':4000},{'id':2,'meal_name':'chickentika','price':6000,'status': False},
@@ -38,7 +38,7 @@ def insert_data(ps_order,current_list):
     #id =  int(id)
    # order = dict()
     #id = id + 1
-    current_list.append(Orders(ps_order['meal_name'],ps_order['price'],False).get_order_json())
+    current_list.append(Meals(ps_order['meal_name'],ps_order['price']).get_order_json())
     #import pdb; pdb.set_trace()
     insert_meal_data_into_mealtb(current_list)
     #import pdb; pdb.set_trace()
