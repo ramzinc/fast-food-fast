@@ -4,7 +4,7 @@ from flask_jwt_extended import (JWTManager,jwt_required,create_access_token,get_
 from api.models.orders import Orders
 from api.models.users import User
 from api.http_helper_scripts import validate_food ,insert_data,check_if_list,get_order,check_id_present,change_status
-from api.user_helper_scripts import (is_admin,validate_user, insert_user_data_into_userdb,get_menu_items,validate_signin_data,get_user_data,get_orders)
+from api.user_helper_scripts import (is_admin,validate_user, insert_user_data_into_userdb,get_menu_items,validate_signin_data,get_user_data,get_orders,get_specific_order)
 import json
 
 id = 0
@@ -101,11 +101,15 @@ class Put_Status(Resource):
 class Post_Signup(Resource):
     def post(self):
         req_data = request.get_json()
-        if validate_user(req_data):
+        usr = User()
+        ret_msg = usr.check_if_user_exists(req_data)
+        if ret_msg == '':
+            return make_response(jsonify({"Error_msg":"Email Already Exists"}))
+        if validate_user(req_data) and ret_msg == True:
             insert_user_data_into_userdb(req_data)
             return make_response(jsonify({"user_entered":req_data}))
         else:
-            return make_response("One Of your values is wrong",400)        
+            return make_response(jsonify({"Error_msg":"Your email is wrong"}),400)        
 
 class Post_SignIn(Resource):
     '''
@@ -174,6 +178,24 @@ class Get_User_Order(Resource):
                 return make_response(jsonify({"ordered_meals": meal_names}))
         else:
             return make_response(jsonify({"Error_Msg":"You are not Authorized to access this p"}))
+
+class Get_Specific_Order(Resource):
+    '''
+    Class To get Specific Order
+    '''
+    @jwt_required
+    def get(self,order_id):
+        id  = get_jwt_identity
+        current_user_id = get_jwt_identity()
+        user =User()
+        user_info = user.get_user_data_using_id(current_user_id)
+        if user.validate_admin(user_info):
+            meal_name = get_specific_order(order_id)
+            return make_response(jsonify({"The order is ":meal_name}),200)
+        else:
+            return make_response(jsonify({"Error_Msg":"You are not athorized"}))
+
+
             
 
 
@@ -185,7 +207,7 @@ api.add_resource(Get_Menu,"/menu")
 api.add_resource(Post_Order,"/users/orders")
 api.add_resource(Get_User_Order,"/users/orders")
 api.add_resource(Get_List_Orders,"/orders")
-api.add_resource(Get_Request,"/orders/<int:id>")
+api.add_resource(Get_Specific_Order,"/orders/<int:order_id>")
 api.add_resource(Get_Index,"/api/v1/")
 api.add_resource(Put_Status,"/api/v1/orders/<int:id>")
 if __name__ == '__main__':

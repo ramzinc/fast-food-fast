@@ -1,6 +1,7 @@
 from api.models.database import Database
 from api.user_helper_scripts import format_user_list
 from api.models.orders import Orders
+from flask import jsonify,make_response
 db_name = 'fast_food_fast_testing'
 class User(object):
     id = 0
@@ -52,6 +53,9 @@ class User(object):
        
 
     def validate_admin(self,user):
+        '''
+        Check if user is an admin or not
+        '''
         if user['admin']==True:
             return True
         else:
@@ -64,7 +68,9 @@ class User(object):
             return False
 
     def check_for_specific_usr_ord(self,user_id):
-        
+        '''
+        Checks for the users specific Order
+        '''
         user_ord_tuple = self.get_meal_id_from_user_id(user_id)
         meal_ord_dict = {}
         meal_names = []
@@ -106,5 +112,36 @@ class User(object):
         meal_name_tup = cur.fetchone()
         meal_name_dict['meal_name'] = meal_name_tup[0]
         return meal_name_dict
-   
     
+    def check_if_user_exists(self,user_info):
+        '''
+        check if user is in db
+        '''
+        if self.check_email_in_db(user_info):
+            #import pdb;pdb.set_trace()
+            return '' 
+        else:
+            #import pdb;pdb.set_trace()
+            return True
+
+
+    def get_all_user_info(self):
+        db = Database(db_name)
+        conn = db.connect_datab()
+        cur = conn.cursor()
+        cur.execute("SELECT * from users;")
+        all_users = cur.fetchall()
+        #import pdb;pdb.set_trace()
+        return all_users
+
+    def check_email_in_db(self,user_info):
+        all_users = self.get_all_user_info()
+        for i in all_users:
+            if user_info['email'] in i:
+                #import pdb;pdb.set_trace()
+                return True
+            else:
+
+                #import pdb;pdb.set_trace()
+                continue
+        return False

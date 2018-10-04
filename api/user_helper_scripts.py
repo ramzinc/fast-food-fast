@@ -1,5 +1,5 @@
 from api.models.database import Database
-import json
+from flask import jsonify,make_response 
 db_name = 'fast_food_fast_testing'
 def validate_user(req_data):
     if 'first_name' in req_data and isinstance(req_data['first_name'],str) and isinstance(req_data['last_name'],str) and is_email(req_data['email']):
@@ -113,3 +113,17 @@ def format_order_ret(ord_tup):
         import pdb;pdb.set_trace()
         ret_list.append(ret_dic)
     return ret_list
+
+def get_specific_order(order_id):
+    db = Database(db_name)
+    conn =  db.connect_datab()
+    cur = conn.cursor()
+    cur.execute("SELECT meal_id FROM fast_order where order_id = %s;" % (order_id))
+    ord_tup = cur.fetchone()
+    meal_id = ord_tup[0]
+    cur.execute("SELECT meal_name FROM fast_meals WHERE meal_id = %s;" % (meal_id))
+    meal_name_tup =  cur.fetchone()
+    if meal_name_tup == None:
+        return make_response(jsonify({"Error_Msg": "No such Order"}))
+    meal_name = meal_name_tup[0]
+    return meal_name

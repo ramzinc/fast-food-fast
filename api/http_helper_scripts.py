@@ -41,7 +41,7 @@ def insert_data(ps_order,current_list):
     current_list.append(Meals(ps_order['meal_name'],ps_order['price']).get_order_json())
     #import pdb; pdb.set_trace()
     insert_meal_data_into_mealtb(current_list)
-    #import pdb; pdb.set_trace()
+    #; pdb.set_trace()
     #return current_list      
 
 def insert_meal_data_into_mealtb(current_list):
