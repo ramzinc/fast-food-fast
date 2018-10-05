@@ -2,8 +2,10 @@ from api.models.database import Database
 from flask import jsonify 
 import json
 from api.user_helper_scripts import get_meal_id
+#from api.http_helper_scripts import get_db_name
 class Orders(object):
-    db_name = "fast_food_fast_testing"    
+    #db_name = "fast_food_fast_testing"
+    #db_name = get_db_name()
     order ={}
     status =''
     order_statuses = ('New','Processing','Cancelled','Complete')
@@ -13,7 +15,7 @@ class Orders(object):
         self.order['user_id']= self.user_id
 
     def get_quantity(self):
-        db = Database(self.db_name)
+        db = Database()
         conn = db.connect_datab()
         cur = conn.cursor()
         cur.execute("SELECT quantity from fast_order where user_id = %s and meal_id = %s;" % (self.order['user_id'],self.order['meal_id']))
@@ -30,7 +32,7 @@ class Orders(object):
         conn.close()
         
     def set_meal_id(self):
-        meal_id = get_meal_id(self.db_name,self.meal_name)
+        meal_id = get_meal_id(self.meal_name)
         #import pdb;pdb.set_trace()
         self.order['meal_id'] = meal_id
 
@@ -42,7 +44,7 @@ class Orders(object):
             return jsonify({'Error':"The Status You Have Entered Is Wrong"})
 
     def save_quantity_alone(self):
-        db = Database(self.db_name)
+        db = Database()
         conn = db.connect_datab()
         cur = conn.cursor()
         cur.execute("SELECT order_id FROM fast_order WHERE user_id = %s and meal_id = %s;" % (self.order['user_id'],self.order['meal_id']))
@@ -54,7 +56,7 @@ class Orders(object):
         return "Print Valid"
 
     def get_order_id(self):
-        db = Database(self.db_name)
+        db = Database()
         conn = db.connect_datab()
         cur = conn.cursor()
         order_id = cur.execute("SELECT order_id FROM fast_order WHERE user_id = %s and meal_id = %s;" % (self.order['user_id'],self.order['meal_id']))
@@ -64,7 +66,7 @@ class Orders(object):
         '''
         Save into Database
         '''
-        db = Database(self.db_name)
+        db = Database()
         conn = db.connect_datab()
         cur = conn.cursor()
         cur.execute("INSERT INTO fast_order (user_id,meal_id,order_status,quantity) VALUES (%s,%s,'%s',%s);" % (self.order['user_id'],self.order['meal_id'],self.order['status'],self.order['quantity']))
@@ -97,7 +99,7 @@ class Orders(object):
         '''
         This gets the meal_id from the orders table using The user_id
         '''
-        db = Database(self.db_name)
+        db = Database()
         conn = db.connect_datab()
         cur = conn.cursor()
 
@@ -111,7 +113,7 @@ class Orders(object):
         Gets meal_name From meal_id 
         '''
         meal_name_dict = dict()
-        db = Database(self.db_name)
+        db = Database()
         conn = db.connect_datab()
         cur = conn.cursor()
         cur.execute("SELECT meal_name from fast_meals where meal_id = '%s'" %(meal_id))

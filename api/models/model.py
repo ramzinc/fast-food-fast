@@ -1,8 +1,9 @@
 import json
 from api.models.database import Database
-
+#from api.http_helper_scripts import get_db_name
 class Meals(object):
-    db_name = 'fast_food_fast_testing'    
+    db_name = 'fast_food_fast_testing' 
+    #db_name = get_db_name()   
     ord = {}
     def  __init__ (self,meal_name,price):
         #self.id = id
@@ -17,7 +18,7 @@ class Meals(object):
         return ord
     
     def get_meal_from_id(self,meal_id):
-        db = Database(self.db_name)
+        db = Database()
         conn = db.connect_datab()
         cur = conn.cursor()
         cur.execute("SELECT * from fast_meals where meal_id = %s;" % (meal_id))

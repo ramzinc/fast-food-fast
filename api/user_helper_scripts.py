@@ -1,6 +1,8 @@
 from api.models.database import Database
-from flask import jsonify,make_response 
+from flask import jsonify,make_response
+#from api.http_helper_scripts import get_db_name
 db_name = 'fast_food_fast_testing'
+#db_name = get_db_name()
 def validate_user(req_data):
     if 'first_name' in req_data and isinstance(req_data['first_name'],str) and isinstance(req_data['last_name'],str) and is_email(req_data['email']):
         return True
@@ -26,7 +28,7 @@ def insert_user_data_into_userdb(user_data):
     Insert user data into the users table in the database
     '''
     full_name = user_data['first_name'] + ' ' + user_data['last_name']
-    db = Database(db_name)
+    db = Database()
     if is_admin(user_data):
         admin = True 
     else:
@@ -40,7 +42,7 @@ def insert_user_data_into_userdb(user_data):
     conn.close()
 
 def get_menu_items():
-    db = Database(db_name)
+    db = Database()
     db.execute_query()
     conn = db.connect_datab()
     cur = conn.cursor()
@@ -61,7 +63,7 @@ def get_user_data(req_data):
     '''
     Return a tuple of data that matches the user details
     '''
-    db = Database(db_name)
+    db = Database()
     conn = db.connect_datab()
     cur = conn.cursor()
     cur.execute("SELECT * FROM Users where email = %s and password = %s;",(req_data['email'],req_data['password']))
@@ -83,9 +85,9 @@ def validate_signin_data(req_data):
     else:
         return False
 
-def get_meal_id(db_in,meal_name):
+def get_meal_id(meal_name):
     #query = 'SELECT id From fast_meals WHERE fastmeals.meal_name = %s;',(meal_name)
-    db = Database(db_in)
+    db = Database()
     db.execute_query()   #incase post order is None
     conn = db.connect_datab()
     cur = conn.cursor()
@@ -95,7 +97,7 @@ def get_meal_id(db_in,meal_name):
     
 def get_orders():
     
-    db = Database(db_name)
+    db = Database()
     conn =  db.connect_datab()
     cur = conn.cursor()
     cur.execute("SELECT * FROM fast_order;")
@@ -115,7 +117,7 @@ def format_order_ret(ord_tup):
     return ret_list
 
 def get_specific_order(order_id):
-    db = Database(db_name)
+    db = Database()
     conn =  db.connect_datab()
     cur = conn.cursor()
     cur.execute("SELECT meal_id FROM fast_order where order_id = %s;" % (order_id))

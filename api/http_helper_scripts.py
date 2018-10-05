@@ -2,11 +2,12 @@
 from api.models.model import Meals
 from api.models.database import Database
 from flask import jsonify,make_response
-#orders = [{'id': 1,'meal_name':'matooke' ,'price':4000},{'id':2,'meal_name':'chickentika','price':6000,'status': False},
-#                   {'id': 3,'meal_name': 'beans' ,'price':1000, 'status': False}]
+import os
 
 #validate if there no id , and a string of meal_name and price is an int
-db_name ="fast_food_fast_testing"
+#db_name ="fast_food_fast_testing"
+
+#db_name =  get_db_name()
 def validate_food(order):
     #for i in order:
     if 'id' not in order and 'meal_name' in order and 'price' in order and isinstance(order['price'],int):
@@ -17,7 +18,7 @@ def validate_food(order):
         return False
 
 def check_id_present(order_id):
-        db = Database(db_name)
+        db = Database()
         conn = db.connect_datab()
         cur = conn.cursor()
         cur.execute("SELECT order_id from fast_order;")
@@ -33,7 +34,7 @@ def check_id_present(order_id):
 
     
 def change_status(order_status,order_id):
-        db = Database(db_name)
+        db = Database()
         conn = db.connect_datab()
         cur = conn.cursor()
         cur.execute("UPDATE fast_order SET order_status = '%s' where order_id=%s;" % (order_status,order_id))
@@ -56,7 +57,7 @@ def insert_data(ps_order,current_list):
 def insert_meal_data_into_mealtb(current_list):
 
     
-    db = Database(db_name)
+    db = Database()
     conn = db.connect_datab()
     db.execute_query()
     for i in current_list:
@@ -83,3 +84,20 @@ def validate_status(req_status):
         return True
     else:
         return False
+
+def get_db_name():
+    environment = os.getenv("Environment")
+    if environment == 'Development':
+        db_name = 'fast_food_fast_testing'
+        return db_name
+    else:
+        db_name = 'dfn51nqle2hqlh'
+        return db_name
+#def get_db_name():
+#    environment = os.getenv("Environment")
+#    if environment == 'Development':
+#        db_name = 'fast_food_fast_testing'
+#        return db_name
+#    else:
+#        db_name = 'dfn51nqle2hqlh'
+#        return db_name

@@ -2,7 +2,7 @@ from api.models.database import Database
 from api.user_helper_scripts import format_user_list
 from api.models.orders import Orders
 from flask import jsonify,make_response
-db_name = 'fast_food_fast_testing'
+#from api.http_helper_scripts import get_db_name
 class User(object):
     id = 0
     email = ''
@@ -22,7 +22,8 @@ class User(object):
         self.full_name = full_name
 
     def get_user_data_using_id(self,id):
-        db = Database(db_name)
+        db = Database()
+        db.execute_query()
         conn = db.connect_datab()
         cur = conn.cursor()
         cur.execute("SELECT * from users where user_id = '%s'" % (id))
@@ -31,7 +32,8 @@ class User(object):
         return user_dict
     
     def get_all_user_ids(self):
-        db = Database(db_name)
+        db = Database()
+        db.execute_query()
         conn = db.connect_datab()
         cur = conn.cursor()
         cur.execute("SELECT user_id from users;")
@@ -89,7 +91,7 @@ class User(object):
         '''
         This gets the meal_id from the orders table using The user_id
         '''
-        db = Database(db_name)
+        db = Database()
         conn = db.connect_datab()
         cur = conn.cursor()
         cur.execute("SELECT meal_id,quantity from fast_order where user_id= %s;" % (user_id))
@@ -104,7 +106,7 @@ class User(object):
         Gets meal_name From meal_id 
         '''
         meal_name_dict = dict()
-        db = Database(db_name)
+        db = Database()
         conn = db.connect_datab()
         cur = conn.cursor()
 
@@ -124,16 +126,7 @@ class User(object):
             #import pdb;pdb.set_trace()
             return True
 
-
-    def get_all_user_info(self):
-        db = Database(db_name)
-        conn = db.connect_datab()
-        cur = conn.cursor()
-        cur.execute("SELECT * from users;")
-        all_users = cur.fetchall()
-        #import pdb;pdb.set_trace()
-        return all_users
-
+    
     def check_email_in_db(self,user_info):
         all_users = self.get_all_user_info()
         for i in all_users:
@@ -145,3 +138,14 @@ class User(object):
                 #import pdb;pdb.set_trace()
                 continue
         return False
+
+
+    def get_all_user_info(self):
+        db = Database()
+        db.execute_query()
+        conn = db.connect_datab()
+        cur = conn.cursor()
+        cur.execute("SELECT * from users;")
+        all_users = cur.fetchall()
+        #import pdb;pdb.set_trace()
+        return all_users

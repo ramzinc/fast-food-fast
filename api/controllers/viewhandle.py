@@ -1,5 +1,5 @@
 from flask import Flask,request,make_response,jsonify,g
-from flask_restful import Resource, Api
+from flask_restful import Resource, Api,reqparse
 from flask_jwt_extended import (JWTManager,jwt_required,create_access_token,get_jwt_identity)
 from api.models.orders import Orders
 from api.models.users import User
@@ -7,34 +7,31 @@ from api.http_helper_scripts import validate_status,validate_food ,insert_data,c
 from api.user_helper_scripts import (is_admin,validate_user, insert_user_data_into_userdb,get_menu_items,validate_signin_data,get_user_data,get_orders,get_specific_order)
 import json
 
-id = 0
+#id = 0
 app = Flask(__name__)
 app.config.from_object('configapp.Config')
+app.env= 'Development'
 app.config['JWT_SECRET_KEY']= 'ZMv_k_%;8-7-6ZHnCub'
-#DATABASE_URI = app.config['DATABASE_URI']
 api = Api(app)
 jwt = JWTManager(app)
 ret_order = list()
-#ret_order =  [{'id':1,'meal_name':"mawolu","price":4000,"status":False}]
 class Post_Food_Item(Resource):
     '''
     This class handles the post method requests
     '''
-   # app = Flask(__name__)
-    #api = Api(app)
+   #app = Flask(__name__)
+   #api = Api(app)
     
     
     
     def post(self):
+        '''
+        Method adds the The Food Item to the database
+        '''
         req_data = request.get_json()
-       # if check_if_list(req_data):
-       #     posted_order = req_data
-       # else:
-       #     posted_order = list()
-       #     posted_order.append(req_data)
         #import pdb;pdb.set_trace()
         if validate_food(req_data):
-            #global ret_order
+            
             food_item =  list()
             insert_data(req_data,food_item) 
             #import pdb;pdb.set_trace()
@@ -44,53 +41,43 @@ class Post_Food_Item(Resource):
             #msg_resp = make_response(ret_order_local,201)
             return make_response(jsonify({"Menu Item Added":ret_order_local}),201)
         else:
-            return make_response('Message: The Structure Is Malformed',400)
+            return make_response(jsonify({'Message': 'meal_name parmater missing'}),400)
 
- 
-    @app.errorhandler(405)
-    def url_not_found(self, error):
-        return make_response(jsonify({'message':'Requested method not allowed'}), 405)
+        parser = reqparse.RequestParser()
+        parser.add_argument('meal_name',type=str ,required=True,help={'Missing Field: The meal_name Is Required {error_msg}'})
+        
 
-    @app.errorhandler(404)
-    def page_not_found(self,error):
-        return make_response(jsonify({'message':'page not found, check the url'}), 404)
-
-    @app.errorhandler(500)
-    def internal_error(self,error):
-         return make_response(jsonify({'message':"500 error"}),500)
-
+    
 
 class Get_Menu(Resource):
     def get(self):
-        
-        #list_data = insert_data("meal_name",4)
-        #global ret_order
-        #ret_o = ret_order
+ 
         menu_list = get_menu_items()
-        #resp = make_response(ret,200)
-        #import pdb;pdb.set_trace()
-        #mime_type =("Content-Type","application/json")
         return make_response(jsonify({"items":menu_list}),200)
-
-#class Get_Request(Resource):
-#    @jwt_required    
-#    def get(self,id):
-#        global ret_order
-#        if check_id_present(id,ret_order):
-#            return (get_order(id,ret_order),200)
-#        else:
-#            return ("{'Message': 'ID Not Found'}",404)
+        
+        
 
 class Get_Index(Resource):
-
+    ''' 
+    Returns The Index Page
+    '''
     def get(self):
         #msg = '<p><h4>Follow the <a href=https://fast-food-fast-mpiima.herokuapp.com/api/v1/orders/> to the API </a><h4></p>'
         msg = 'Follow Me'
-        return (msg,200)
+        return make_response(msg,200)
 
 class Put_Status(Resource):
+    '''
+    Class deals with the put status to /orders/<order_id:int>
+    '''
     @jwt_required
     def put(self,order_id):
+        '''
+        Put Method EndPoint Changes order_status of order
+        '''
+        parser = reqparse.RequestParser()
+        parser.add_argument('order_id',type=int,help='Error Msg:Your order_id does not exist',required=True)
+        
         req_status  = request.get_json()
         current_user_id = get_jwt_identity()
         user =User()
@@ -101,18 +88,33 @@ class Put_Status(Resource):
         else:
             return make_response(jsonify({"Error_msg":"Your request contains errors probably not an Admin or Id doesnot exis or status is illegal"}),400)
 
+        
 class Post_Signup(Resource):
+    '''
+    Sign Up Api Endpoint
+    '''
     def post(self):
         req_data = request.get_json()
         usr = User()
+        #parser = reqparse.RequestParser()
+        #parser.add_argument('email',type=str,required=True,help='Error_Msg: Your email is not a being passed as a string.')
+        #parser.add_argument('first_name',type=str,required=True,help='Error_MSg: Missing first_name or it is not a string {error_msg}')
+        #parser.add_argument('last_name',type=str,required=True,help='Error_MSg: Missing last_name or it is not a string {error_msg}')
+        #parser.add_argument('email',type=str,required=True,help='Error_MSg: Missing email or it is not a string {error_msg}')
+        #parser.add_argument('password',type=str,required=True,help='Error_MSg: Missing password or it is not a string {error_msg}')
+        #req_data = parser.parse_args()
         ret_msg = usr.check_if_user_exists(req_data)
         if ret_msg == '':
             return make_response(jsonify({"Error_msg":"Email Already Exists"}))
         if validate_user(req_data) and ret_msg == True:
             insert_user_data_into_userdb(req_data)
-            return make_response(jsonify({"user_entered":req_data}))
+            response_string ={"user_entered":req_data}
+            content = ('Content-Type','applicaton/json')
+            return make_response(jsonify(response_string),200)
         else:
-            return make_response(jsonify({"Error_msg":"Your email is wrong"}),400)        
+            return make_response(jsonify({"Error_msg":"Your Data please check that you have a valid email and string objects for the rest of the parameters is wrong"}),400)
+
+        
 
 class Post_SignIn(Resource):
     '''
@@ -123,8 +125,6 @@ class Post_SignIn(Resource):
         if validate_signin_data(req_data):
             db_data = get_user_data(req_data)
             access_token = create_access_token(identity=db_data['id'],expires_delta=False)
-            #import pdb;pdb.set_trace()
-            #return make_response(jsonify({'Logged In As':db_data}),200)
             return jsonify(access_token=access_token)
         else:
             return make_response(jsonify({'One of your inputs are invalid'}))
@@ -135,13 +135,15 @@ class Post_Order(Resource):
     '''
     @jwt_required
     def post(self):
+        '''
+        Protected Endpoint that posts an order. Only logged in Users can use it POST /users/orders
+        '''
         current_user = get_jwt_identity()
         req_data = request.get_json()
         meal_name = req_data['meal_name']
         ord = Orders(meal_name,current_user)
         ord.set_meal_id()
         ord.set_status('New')
-        #import pdb;pdb.set_trace() # Not running
         quantity = ord.get_quantity()
         if quantity > 1:
              ord.save_quantity_alone()        
@@ -151,6 +153,9 @@ class Post_Order(Resource):
         return make_response(jsonify({'order_place':order}))
 
 class Get_List_Orders(Resource):
+    '''
+    Api EndPoint to get list of orders GET /orders/
+    '''
     @jwt_required
     def get(self):
         current_user_id = get_jwt_identity()
@@ -160,11 +165,11 @@ class Get_List_Orders(Resource):
             order = get_orders()
             return make_response(jsonify({"order":order}))
         else:
-            return make_response(jsonify({"Msg":"Your Not Authorised to get dat list"}))
+            return make_response(jsonify({"Msg":"Your Not Authorised to get dat list"}),401)
         
 class Get_User_Order(Resource):
     '''
-    Get A Specific Users id Only Accessible by Admin
+    Get A Specific user's order id Only Accessible by Admin
     '''
     @jwt_required
     def get(self):
@@ -195,9 +200,14 @@ class Get_Specific_Order(Resource):
         if user.validate_admin(user_info):
             meal_name = get_specific_order(order_id)
             return make_response(jsonify({"The order is ":meal_name}),200)
+        elif not check_id_present(order_id):
+            return make_response(jsonify({"The order ID is not Present In The DB":order_id}),404)
         else:
             return make_response(jsonify({"Error_Msg":"You are not athorized"}))
-
+    
+    @app.errorhandler(500)
+    def get_none_type_error(self,error):
+        return make_response(jsonify({"Not Found":"The order You Entered is not there"}))
 
 
 
@@ -211,5 +221,9 @@ api.add_resource(Get_List_Orders,"/orders")
 api.add_resource(Get_Specific_Order,"/orders/<int:order_id>")
 api.add_resource(Get_Index,"/api/v1/")
 api.add_resource(Put_Status,"/orders/<int:order_id>")
+
+@app.errorhandler(TypeError)
+def none_type_error(error):
+    return make_response(jsonify({'Error_msg':'The data you entered does not exist'} ))
 if __name__ == '__main__':
         app.run()
