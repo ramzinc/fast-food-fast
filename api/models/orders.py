@@ -2,7 +2,6 @@ from api.models.database import Database
 from flask import jsonify 
 import json
 from api.user_helper_scripts import get_meal_id
-#from api.http_helper_scripts import get_db_name
 class Orders(object):
     #db_name = "fast_food_fast_testing"
     #db_name = get_db_name()
@@ -73,20 +72,7 @@ class Orders(object):
         conn.commit()
         conn.close()
 
-   # def get_meal_id_from_user_id(self,id):
-   #     db = Database(self.db_name)
-   #     conn = db.connect_datab()
-   #     cur = conn.cursor()
-   #     cur.execute("SELECT meal  ")
-   #     conn.close()
-
-   #
-   #   
-   # 
-   #
-   #    
-   #   
-   #
+   
 
     def validate_status(self,status):
             if status in self.order_statuses:
@@ -94,18 +80,18 @@ class Orders(object):
             else:
                 return False
 
-    #This gets the meal_id from the orders table using The user_id 
-    def get_meal_id_from_user_id(self,user_id):
-        '''
-        This gets the meal_id from the orders table using The user_id
-        '''
-        db = Database()
-        conn = db.connect_datab()
-        cur = conn.cursor()
-
-        cur.execute("SELECT meal_id,quantity from fast_order where user_id= '%s';" % (user_id))
-        meal_id_tup = cur.fetchall()
-        return meal_id_tup
+    ##This gets the meal_id from the orders table using The user_id 
+    #def get_meal_id_from_user_id(self,user_id):
+    #    '''
+    #    This gets the meal_id from the orders table using The user_id
+    #    '''
+    #    db = Database()
+    #    conn = db.connect_datab()
+    #    cur = conn.cursor()
+#
+    #    cur.execute("SELECT meal_id,quantity from fast_order where user_id= '%s';" % (user_id))
+    #    meal_id_tup = cur.fetchall()
+    #    return meal_id_tup
                 
 
     def get_meal_name_from_id(self,meal_id):

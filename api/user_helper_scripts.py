@@ -3,6 +3,7 @@ from flask import jsonify,make_response
 #from api.http_helper_scripts import get_db_name
 db_name = 'fast_food_fast_testing'
 #db_name = get_db_name()
+from api.models.users import User
 def validate_user(req_data):
     if 'first_name' in req_data and isinstance(req_data['first_name'],str) and isinstance(req_data['last_name'],str) and is_email(req_data['email']):
         return True
@@ -69,15 +70,10 @@ def get_user_data(req_data):
     cur.execute("SELECT * FROM Users where email = %s and password = %s;",(req_data['email'],req_data['password']))
     ret_tup = cur.fetchone()
     conn.close()
+    usr = User()
     #import pdb; pdb.set_trace()
-    ret_dic =format_user_list(ret_tup)
+    ret_dic = usr.format_user_list(ret_tup)
     return ret_dic
-
-def format_user_list(ret_tup):
-    new_dic = dict()
-    #import pdb;pdb.set_trace()
-    new_dic['id'],new_dic['full_name'],new_dic['admin'],new_dic['email'],new_dic['password'] = ret_tup
-    return new_dic
 
 def validate_signin_data(req_data):
     if 'password' in req_data and 'email' in req_data:
@@ -102,18 +98,30 @@ def get_orders():
     cur = conn.cursor()
     cur.execute("SELECT * FROM fast_order;")
     ord_tup = cur.fetchall()
-    #ret_order = json.dumps(ord_tup)
-    return ord_tup
+    ret_order = format_order_ret(ord_tup)
+    return ret_order
 
 def format_order_ret(ord_tup):
-    ret_dic = dict()
+    ret_dic_id = dict()
     ret_list = list()
-    import pdb;pdb.set_trace()
+    ret_dic_data = dict()
+    usr = User()
+    #import pdb;pdb.set_trace()
     for i in ord_tup:
-        import pdb;pdb.set_trace()
-        ret_dic['order_id'],ret_dic['user_id'],ret_dic['meal_id'],ret_dic['order_status'],ret_dic['quantity'] = i
-        import pdb;pdb.set_trace()
-        ret_list.append(ret_dic)
+        #import pdb;pdb.set_trace()
+        ret_dic_id['order_id'],ret_dic_id['user_id'],ret_dic_id['meal_id'],ret_dic_id['order_status'],ret_dic_id['quantity'] = i
+        ret_dic_data['user_name'] = usr.get_user_data_using_id(ret_dic_id['user_id'])['full_name']
+        #import pdb;pdb.set_trace()
+        ret_dic_data['meal_name'] = usr.get_meal_name_from_id(ret_dic_id['meal_id'])
+        #import pdb;pdb.set_trace()
+        ret_dic_data['order_status'] = ret_dic_id['order_status']
+        # pdb;pdb.set_trace()
+        ret_dic_data['quantity'] = ret_dic_id['quantity']        
+        #import pdb;pdb.set_trace()
+        ret_list.append(ret_dic_data)
+        #import pdb;pdb.set_trace()
+        continue
+        #import pdb;pdb.set_trace()
     return ret_list
 
 def get_specific_order(order_id):

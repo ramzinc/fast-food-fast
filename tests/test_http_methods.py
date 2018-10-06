@@ -10,9 +10,10 @@ class testCases(unittest.TestCase):
         db_name = os.getenv("DATABASE_TESTING") 
         def setUp(self):
             signup_data = {"first_name":"Arnold","last_name":"Mpiima","admin":True,"email":"admin@admin.com","password":"12345"}
-            
+            test_meal_item = {"meal_name":"mana","price":5000}
             self.test_client = app.test_client()
             test_post = self.test_client.post("/auth/signup",data=json.dumps(signup_data),content_type="application/json").get_json()
+            test_post_food_data= self.test_client.post("/menu",data=json.dumps(test_meal_item),content_type="application/json").get.json
             app.config['TESTING'] = True
             db = Database()
             db.execute_query()
@@ -42,15 +43,16 @@ class testCases(unittest.TestCase):
             self.assertIn("access_token",token)
 
         def test_get_specific_order(self):
-            order = {'id':1,'meal_name':"mawolu","price":4000}
-            ret_order = self.test_client('/orders/1').get_json()      
+            #order = {"meal_name":"mawolu","price":4000}
+            order = {"the order is": "mawolu"}
+            ret_order = self.test_client.get('/orders/1').get_json()
             assert order == ret_order
 #
 #
-    #    def test_update_order(test_client):
+    #    def test_update_order(self):
     #         #  saved_data = jsonify(saved_data)
     #        post_data = {"meal_name": "Food","price":1000}
-    #        ret_order = test_client.post('/api/v1/orders/',json=post_data)
+    #        ret_order = test_client.post('/orders/',json=post_data)
     #        match = {
     #        "items": {
     #            "id": 2,

@@ -161,7 +161,9 @@ class Get_List_Orders(Resource):
         current_user_id = get_jwt_identity()
         user =User()
         user_info = user.get_user_data_using_id(current_user_id)
+        #import pdb;pdb.set_trace()
         if user.validate_admin(user_info):
+            #import pdb;pdb.set_trace()
             order = get_orders()
             return make_response(jsonify({"order":order}))
         else:
@@ -178,11 +180,13 @@ class Get_User_Order(Resource):
         #import pdb;pdb.set_trace()
         #usr_info = 
         if usr.check_if_user_id_indb(login_id):
+            #import pdb;pdb.set_trace()
             meal_names = usr.check_for_specific_usr_ord(login_id)
+            #import pdb;pdb.set_trace()
             if meal_names == []:
                 return make_response(jsonify({"Msg":"Your User Has No Orders"}))
             else:
-            #import pdb; pdb.set_trace()
+                #import pdb; pdb.set_trace()
                 return make_response(jsonify({"ordered_meals": meal_names}))
         else:
             return make_response(jsonify({"Error_Msg":"You are not Authorized to access this p"}))
@@ -197,6 +201,7 @@ class Get_Specific_Order(Resource):
         current_user_id = get_jwt_identity()
         user =User()
         user_info = user.get_user_data_using_id(current_user_id)
+        #import pdb;pdb.set_trace()
         if user.validate_admin(user_info):
             meal_name = get_specific_order(order_id)
             return make_response(jsonify({"The order is ":meal_name}),200)
@@ -227,3 +232,7 @@ def none_type_error(error):
     return make_response(jsonify({'Error_msg':'The data you entered does not exist'} ))
 if __name__ == '__main__':
         app.run()
+
+@app.errorhandler(KeyError)
+def key_error(error):
+    return  make_response(jsonify({'Error_msg':'You are missing a field in the data you have posted.'}))
