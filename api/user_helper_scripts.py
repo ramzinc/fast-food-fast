@@ -43,6 +43,7 @@ def insert_user_data_into_userdb(user_data):
     conn.close()
 
 def get_menu_items():
+    #ret_d = dict()
     db = Database()
     db.execute_query()
     conn = db.connect_datab()
@@ -50,15 +51,22 @@ def get_menu_items():
     cur.execute("SELECT * from fast_meals;")
     lis = cur.fetchall()
     conn.close()
-    #ret_d = format_menu_list(lis)
-    return lis
+    ret_d = format_menu_list(lis)
+    return ret_d
 
-#def format_menu_list(lis):
-#    ret_dic = dict()
-#    for i in lis:
-#        ret_dic['id'],ret_dic['meal_name'],ret_dic['price']= i[0],i[1],i[2]
-#        
-#    return ret_dic
+def format_menu_list(lis):
+    
+    ret_list = list()
+    for i in lis:
+        ret_dic = dict()
+        #import pdb;pdb.set_trace()
+        ret_dic['id'],ret_dic['meal_name'],ret_dic['price']= i
+        #import pdb;pdb.set_trace()
+        ret_list.append(ret_dic)
+        #import pdb;pdb.set_trace
+        #continue
+    #import pdb;pdb.set_trace()
+    return ret_list
         
 def get_user_data(req_data):
     '''
@@ -102,12 +110,12 @@ def get_orders():
     return ret_order
 
 def format_order_ret(ord_tup):
-    ret_dic_id = dict()
     ret_list = list()
-    ret_dic_data = dict()
     usr = User()
     #import pdb;pdb.set_trace()
     for i in ord_tup:
+        ret_dic_id = dict()
+        ret_dic_data = dict()
         #import pdb;pdb.set_trace()
         ret_dic_id['order_id'],ret_dic_id['user_id'],ret_dic_id['meal_id'],ret_dic_id['order_status'],ret_dic_id['quantity'] = i
         ret_dic_data['user_name'] = usr.get_user_data_using_id(ret_dic_id['user_id'])['full_name']
